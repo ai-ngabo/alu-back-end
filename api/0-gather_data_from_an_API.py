@@ -22,6 +22,9 @@ number_of_done_tasks = len(completed_tasks)
 total_number_of_tasks = len(todos)
 
 # Display TODO list progress
-print(f"Employee {employee_name} is done with tasks({number_of_done_tasks}/{total_number_of_tasks}):")
+print(
+   f"Employee {employee_name} is done with tasks("
+   f"{number_of_done_tasks}/{total_number_of_tasks}):"
+)
 for task in completed_tasks:
     print(f"\t {task}")
