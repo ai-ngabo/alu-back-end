@@ -1,30 +1,27 @@
 #!/usr/bin/python3
+"""
+Using a REST API, and a given emp_ID, return info about their TODO list.
+"""
 import requests
 import sys
 
-if len(sys.argv) != 2:
-    print("Usage: python3 script.py EMPLOYEE_ID")
-    sys.exit(1)
 
-employee_id = int(sys.argv[1])
-base_url = "https://jsonplaceholder.typicode.com/"
+if __name__ == "__main__":
+    """ main section """
+    BASE_URL = 'https://jsonplaceholder.typicode.com'
+    employee = requests.get(
+        BASE_URL + f'/users/{sys.argv[1]}/').json()
+    EMPLOYEE_NAME = employee.get("name")
+    employee_todos = requests.get(
+        BASE_URL + f'/users/{sys.argv[1]}/todos').json()
+    serialized_todos = {}
 
-# Fetch employee details
-employee = requests.get(base_url + f"users/{employee_id}").json()
-employee_name = employee.get('name')
+    for todo in employee_todos:
+        serialized_todos.update({todo.get("title"): todo.get("completed")})
 
-# Fetch employee's TODO list
-todos = requests.get(base_url + f"todos?userId={employee_id}").json()
-
-# Filter and count completed tasks
-completed_tasks = [todo['title'] for todo in todos if todo['completed']]
-number_of_done_tasks = len(completed_tasks)
-total_number_of_tasks = len(todos)
-
-# Display TODO list progress
-print(
-   f"Employee {employee_name} is done with tasks("
-   f"{number_of_done_tasks}/{total_number_of_tasks}):"
-)
-for task in completed_tasks:
-    print(f"\t {task}")
+    COMPLETED_LEN = len([k for k, v in serialized_todos.items() if v is True])
+    print("Employee {} is done with tasks({}/{}):".format(
+        EMPLOYEE_NAME, COMPLETED_LEN, len(serialized_todos)))
+    for key, val in serialized_todos.items():
+        if val is True:
+            print("\t {}".format(key))
